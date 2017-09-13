@@ -4,7 +4,8 @@ version = "0.1.0"
 authors = ["Timo Sulg <timgluz@gmail.com>"]
 
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["rlib", "cdylib"]
 
 [dependencies]
 helix = "^0.6.0"
+fosslim = "0.0.2-alpha"

@@ -29,11 +29,19 @@ Or install it yourself as:
 
 ## Usage
 
+run `bundle exec irb` on your commandline to fire up Ruby REPL;
+
 ```
 require 'license_matcher'
 
-# TODO: it will change a bit as we need to load pre-build index and build a model before 
-LicenseMatcher.match_text("...MIT license text...")
+# build index from SPDX data
+LicenseMatcher.build_index( "data/licenses", "data/index.msgpack")
+
+# match license text
+txt = File.read("fixtures/files/mit.txt");
+lm = LicenseMatcher.new("data/index.msgpack")
+lm.match(txt, 0.9) 
+
 ```
 
 
