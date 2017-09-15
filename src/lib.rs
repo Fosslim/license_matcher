@@ -27,7 +27,7 @@ ruby!{
 
             match self.model.match_document(&doc) {
                 Some(score) => {
-                    if min_score > 0.0 & score.score >= min_score {
+                    if ( min_score > 0.0 ) & ( min_score <= score.score as f64 ) {
                         score.label.unwrap()
                     } else {
                         no_match
