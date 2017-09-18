@@ -1,6 +1,6 @@
 # LicenseMatcher
 
-LicenseMatcher is a rubygem that can match a fulltext of Opensource License Text with SPDX id; So you dont have to guess is it **BSD** or **MIT** license, let the `LicenseMatcher` does the heavy lifting for you;
+LicenseMatcher is a rubygem that matches a fulltext of Opensource License Text with the SPDX id; So you dont have to guess is it **BSD** or **MIT** license, let the `LicenseMatcher` does the heavy lifting for you;
 
 
 It uses [Fosslim](https://github.com/Fosslim/fosslim/) library underneath, which gives remarkable performance with lower memory cost than pure Ruby implementation;
@@ -34,14 +34,61 @@ run `bundle exec irb` on your commandline to fire up Ruby REPL;
 ```
 require 'license_matcher'
 
-# build index from SPDX data
-LicenseMatcher.build_index( "data/licenses", "data/index.msgpack")
+# download pre-build index
+curl -O https://github.com/Fosslim/license_matcher/blob/master/data/index.msgpack
+
+# or build index from the SPDX data
+LicenseMatcher::TFRustMatcher.build_index( "data/licenses", "data/index.msgpack")
 
 # match license text
 txt = File.read("fixtures/files/mit.txt");
-lm = LicenseMatcher.new("data/index.msgpack")
-lm.match(txt, 0.9) 
 
+lm = LicenseMatcher::TFRubyMatcher.new("data/index.msgpack")
+lm.match_text(txt, 0.9) 
+
+
+```
+
+
+## Matchers
+
+It currently supports 4 different models:
+
+* **UrlMatcher.match_url** - finds matching SPDX license by comparing URL with urls in the `licenses.json`
+
+```ruby
+lm = LicenseMatcher::UrlMatcher.new
+lm.match_url "https://opensource.org/licenses/AAL"
+
+=> "AAL"
+```
+
+* **RuleMatcher.match_rule** - scans a text and returns the SPDX id, which rule matches longest substring in the license text
+
+```ruby
+lm = LicenseMatcher::RuleMatcher.new
+lm.match_rules "It is license under Apache 2.0 License."
+
+=> "Apache-2.0"
+```
+
+* **TFRubyMatcher** - original Ruby implementation, uses TF/IDF and Cosine similarity;
+
+```
+lm = LicenseMatcher::TFRubyMatcher.new
+
+txt = File.read "fixtures/files/mit.html"
+clean_txt = lm.preprocess_html txt # NB! it may help to increase accuracy
+lm.match_txt clean_txt
+```
+
+* **TFRustMatcher** - uses simple Jaccard similarity;
+
+```
+lm = LicenseMatcher::TFRustMatcher.new
+
+txt = File.read "fixtures/files/mit.txt"
+lm.match_text clean_txt
 ```
 
 
