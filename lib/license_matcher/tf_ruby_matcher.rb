@@ -12,7 +12,7 @@ module LicenseMatcher
     DEFAULT_CORPUS_FILES_PATH = 'data/spdx_licenses/plain'
     CUSTOM_CORPUS_FILES_PATH  = 'data/custom_licenses' # Where to look up non SPDX licenses
     LICENSE_JSON_FILE         = 'data/spdx_licenses/licenses.json'
-
+    DEFAULT_MIN_CONFIDENCE    = 0.9
 
     def initialize(files_path = DEFAULT_CORPUS_FILES_PATH, license_json_file = LICENSE_JSON_FILE)
       spdx_ids, spdx_docs = read_corpus(files_path)
@@ -47,7 +47,7 @@ module LicenseMatcher
       @id_spdx_idx.fetch(lic_id.to_s.downcase, lic_id.upcase)
     end
 
-    def match_text(text, n = 3, is_processed_text = false)
+    def match_text(text, min_confidence = DEFAULT_MIN_CONFIDENCE, is_processed_text = false)
       return [] if text.to_s.empty?
 
       text = preprocess_text(text) if is_processed_text == false
@@ -62,18 +62,18 @@ module LicenseMatcher
         dists << [i, cos_sim(mat1[i, true], mat2)]
       end
 
-      top_matches = dists.sort {|a,b| b[1] <=> a[1]}.take(n)
+      doc_id, best_score = dists.sort {|a,b| b[1] <=> a[1]}.first
+      best_match = @model.documents[doc_id].id.downcase
 
-      # Translate doc numbers to id
-      top_matches.reduce([]) do |acc, doc_id_and_score|
-        doc_id, score = doc_id_and_score
-        acc << [ @model.documents[doc_id].id.downcase, score ]
-        acc
+      if best_score.to_f > min_confidence
+        to_spdx_id( best_match )
+      else
+        ""
       end
     end
 
-    def match_html(html_text, n = 3)
-      match_text(preprocess_html(html_text), n)
+    def match_html(html_text, min_confidence = DEFAULT_MIN_CONFIDENCE)
+      match_text(preprocess_html(html_text), min_confidence)
     end
 
   #-- helpers
