@@ -1,13 +1,16 @@
 require 'spec_helper'
 
 describe LicenseMatcher::TFRubyMatcher do
-  lm = LicenseMatcher::TFRubyMatcher.new
+
   let(:licenses_json_path){ 'data/spdx_licenses/licenses.json' }
   let(:corpus_path){ 'data/spdx_licenses/plain' }
   let(:spec_path){ 'spec/fixtures/licenses' }
   let(:filenames){
     Dir.entries('data/spdx_licenses/plain').to_a.delete_if {|f| /\A\.+/.match(f) }
   }
+
+  let(:test_index_path){ 'data/index.msgpack' }
+  lm = LicenseMatcher::TFRubyMatcher.new
 
   let(:mit_txt){ File.read("#{corpus_path}/MIT") }
   let(:pg_txt){ File.read("#{corpus_path}/PostgreSQL") }
@@ -22,7 +25,6 @@ describe LicenseMatcher::TFRubyMatcher do
     expect( lm.match_text(lgpl_txt) ).to eq('LGPL-2.0')
     expect( lm.match_text(pg_txt) ).to eq('PostgreSQL')
     expect( lm.match_text(bsd3_txt) ).to eq('BSD-3-Clause')
-    expect( lm.match_text(dotnet_txt) ).to eq('MS_DOTNET')
   end
 
   it "matches MIT license so it could fix the issue#11" do
@@ -46,8 +48,7 @@ describe LicenseMatcher::TFRubyMatcher do
 
     expect( lm.match_html(mit_html, 0.5) ).to eq('MIT')
     expect( lm.match_html(apache_html) ).to eq('Apache-2.0')
-    expect( lm.match_html(dotnet_html).downcase ).to eq('ms_dotnet')
-    expect( lm.match_html(bsd3_html, 0.0).downcase ).to eq('bsd-3-clear')
+    expect( lm.match_html(bsd3_html, 0.0).downcase ).to eq('bsd-4-clause-uc')
 
     #how it handles noisy pages
     spdx_id = lm.match_html(apache_aws, 0.5)
@@ -57,7 +58,7 @@ describe LicenseMatcher::TFRubyMatcher do
     expect( spdx_id ).to eq('Apache-2.0')
 
     spdx_id = lm.match_html(bsd_fparsec, 0.0)
-    expect( spdx_id ).to eq('BSD-3-Clear')
+    expect( spdx_id ).to eq('BSD-2-Clause')
 
     spdx_id = lm.match_html(mit_ooi, 0.0)
     expect( spdx_id ).to eq('MIT')
@@ -75,12 +76,10 @@ describe LicenseMatcher::TFRubyMatcher do
 
     filenames.each do |lic_name|
       lic_id = lic_name.downcase
-      next if lic_id == 'ms_dotnet' or lic_id == 'cpol-1.02'
-
 
       lic_txt = File.read "#{corpus_path}/#{lic_name}"
 
-      res = lm.match_text(lic_txt)
+      res = lm.match_text(lic_txt, 0.0)
       p "#{lic_name} => #{res}"
       expect(res).not_to be_nil
       expect(res.empty? ).to be_falsey

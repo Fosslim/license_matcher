@@ -1,50 +1,26 @@
 require 'narray'
 require 'tf-idf-similarity'
-require 'json'
+require 'msgpack'
 
 module LicenseMatcher
 
   class TFRubyMatcher
     include Preprocess
 
-    attr_reader :corpus, :licenses, :model, :spdx_ids, :custom_ids, :id_spdx_idx
+    attr_reader :corpus, :model, :spdx_ids
 
-    DEFAULT_CORPUS_FILES_PATH = 'data/spdx_licenses/plain'
-    CUSTOM_CORPUS_FILES_PATH  = 'data/custom_licenses' # Where to look up non SPDX licenses
-    LICENSE_JSON_FILE         = 'data/spdx_licenses/licenses.json'
+    DEFAULT_INDEX_PATH = 'data/index.msgpack'
     DEFAULT_MIN_CONFIDENCE    = 0.9
+    A_DOC_ROW = 3 # a array index to find the rows of indexed documents
 
-    def initialize(files_path = DEFAULT_CORPUS_FILES_PATH, license_json_file = LICENSE_JSON_FILE)
-      spdx_ids, spdx_docs = read_corpus(files_path)
-      custom_ids, custom_docs = read_corpus(CUSTOM_CORPUS_FILES_PATH)
+    def initialize(index_path = DEFAULT_INDEX_PATH)
+      spdx_ids, spdx_docs = read_corpus(index_path)
 
-      @licenses = spdx_ids + custom_ids
       @spdx_ids = spdx_ids
-      @custom_ids = custom_ids
-      @corpus = spdx_docs + custom_docs
-
-      licenses_json_doc = read_json_file license_json_file
-      raise("Failed to read licenses.json") if licenses_json_doc.nil?
-
+      @corpus = spdx_docs
       @model = TfIdfSimilarity::BM25Model.new(@corpus, :library => :narray)
 
-      @id_spdx_idx = init_id_idx(licenses_json_doc) #reverse index from downcased licenseID to case sensitive spdx id
       true
-    end
-
-    def init_id_idx(licenses_json_doc)
-      idx = {}
-      licenses_json_doc.to_a.each do |spdx_item|
-        lic_id = spdx_item[:id].to_s.downcase
-        idx[lic_id] = spdx_item[:id]
-      end
-
-      idx
-    end
-
-    # converts downcases spdxID to case-sensitive SPDX-ID as it's in licenses.json
-    def to_spdx_id(lic_id)
-      @id_spdx_idx.fetch(lic_id.to_s.downcase, lic_id.upcase)
     end
 
     def match_text(text, min_confidence = DEFAULT_MIN_CONFIDENCE, is_processed_text = false)
@@ -63,10 +39,10 @@ module LicenseMatcher
       end
 
       doc_id, best_score = dists.sort {|a,b| b[1] <=> a[1]}.first
-      best_match = @model.documents[doc_id].id.downcase
+      best_match = @model.documents[doc_id].id
 
       if best_score.to_f > min_confidence
-        to_spdx_id( best_match )
+        best_match
       else
         ""
       end
@@ -77,8 +53,6 @@ module LicenseMatcher
     end
 
   #-- helpers
-
-
     # Transforms document into TF-IDF matrix used for comparition
     def doc_tfidf_matrix(doc)
       arr = Array.new(@model.terms.size) do |i|
@@ -103,37 +77,23 @@ module LicenseMatcher
       ( norm > 0 ? length / norm : 0.0)
     end
 
+    # Reads the content of licenses from the pre-built index
+    # NB! it is sensitive to the changes in the Fosslim/Index serialization
+    def read_corpus(index_path)
+      idx = MessagePack.unpack File.read index_path
+      spdx_ids = []
+      docs = []
 
-    def read_json_file(file_path)
-      JSON.parse(File.read(file_path), {symbolize_names: true})
-    rescue
-      log.info "Failed to read json file `#{file_path}`"
-      nil
-    end
-
-
-    # Reads licenses content from the files_path and returns list of texts
-    def read_corpus(files_path)
-      file_names = get_license_names(files_path)
-
-      docs = file_names.reduce([]) do |acc, file_name|
-        content = File.read("#{files_path}/#{file_name}")
+      idx[A_DOC_ROW].to_a.each do |doc_row|
+        _, spdx_id, content, _ = doc_row
         txt = preprocess_text content
         if txt
-          acc << TfIdfSimilarity::Document.new(txt, :id => file_name)
-        else
-          p "read_corpus: failed to encode content of corpus #{files_path}/#{file_name}"
+          spdx_ids << spdx_id
+          docs << TfIdfSimilarity::Document.new(txt, :id => spdx_id)
         end
-
-        acc
       end
 
-      [file_names, docs]
-    end
-
-
-    def get_license_names(files_path)
-      Dir.entries(files_path).to_a.delete_if {|name| ( name == '.' or name == '..' or name =~ /\w+\.py/i or name =~ /.DS_Store/i )}
+      [spdx_ids, docs]
     end
 
   end
