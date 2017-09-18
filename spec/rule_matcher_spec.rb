@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe RuleMatcher do
+describe LicenseMatcher::RuleMatcher do
   let(:lm){ LicenseMatcher::RuleMatcher.new }
 
   describe "match_rules" do

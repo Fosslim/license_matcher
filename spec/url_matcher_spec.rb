@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe UrlMatcher do
+describe LicenseMatcher::UrlMatcher do
   let(:lm){ LicenseMatcher::UrlMatcher.new }
   let(:licenses_json_path){ LicenseMatcher::UrlMatcher::DEFAULT_LICENSE_JSON }
 

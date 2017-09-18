@@ -1,7 +1,8 @@
 require 'spec_helper'
 require 'json'
 
-describe RuleMatcher do
+describe LicenseMatcher::RuleMatcher do
+
   lm = LicenseMatcher::RuleMatcher.new
   let(:json_file_path){ LicenseMatcher::RuleMatcher::DEFAULT_LICENSE_JSON }
   let(:json_licenses){ JSON.parse(File.read(json_file_path)) }
