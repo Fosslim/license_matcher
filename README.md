@@ -85,12 +85,36 @@ lm.match_txt clean_txt
 * **TFRustMatcher** - uses simple Jaccard similarity;
 
 ```
-lm = LicenseMatcher::TFRustMatcher.new
+lm2 = LicenseMatcher::TFRustMatcher.new
 
 txt = File.read "fixtures/files/mit.txt"
-lm.match_text clean_txt
+lm2.match_text txt
 ```
 
+## Benchmarks
+
+* initialization, Ruby version 1times, Rust version 1000x
+
+```
+					user     system      total        real
+TFRubyMatcher: 12.850000   0.180000  13.030000 ( 13.210955)
+TFRustMatcher: 26.260000   9.400000  35.660000 ( 38.264632)
+```
+* matching preprocessed short [MIT](https://raw.githubusercontent.com/Fosslim/license_matcher/master/data/spdx_licenses/plain/MIT) text 1000x times
+
+```
+       			user     system      total        real
+TFRubyMatcher:102.410000  12.180000 114.590000 (116.308119)
+TFRustMatcher:  7.170000   0.040000   7.210000 (  7.266000)
+```
+
+* matching preprocessed long [AGPL-3.0](https://raw.githubusercontent.com/Fosslim/license_matcher/master/data/spdx_licenses/plain/AGPL-3.0) text 1000x times
+
+```
+       			user     system      total        real
+TFRubyMatcher:242.450000  21.960000 264.410000 (276.417704)
+TFRustMatcher:  9.340000   0.070000   9.410000 (  9.478597)
+```
 
 ## Development
 

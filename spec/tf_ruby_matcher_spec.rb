@@ -5,11 +5,12 @@ describe LicenseMatcher::TFRubyMatcher do
   let(:licenses_json_path){ 'data/spdx_licenses/licenses.json' }
   let(:corpus_path){ 'data/spdx_licenses/plain' }
   let(:spec_path){ 'spec/fixtures/licenses' }
+  let(:test_index_path){ 'data/index.msgpack' }
   let(:filenames){
     Dir.entries('data/spdx_licenses/plain').to_a.delete_if {|f| /\A\.+/.match(f) }
   }
 
-  let(:test_index_path){ 'data/index.msgpack' }
+
   lm = LicenseMatcher::TFRubyMatcher.new
 
   let(:mit_txt){ File.read("#{corpus_path}/MIT") }
@@ -72,6 +73,7 @@ describe LicenseMatcher::TFRubyMatcher do
     expect( spdx_id ).to eq('CPOL-1.02')
   end
 
+
   it "matches all the license files in the corpus" do
 
     filenames.each do |lic_name|
@@ -86,4 +88,6 @@ describe LicenseMatcher::TFRubyMatcher do
       expect(res.downcase).to eq(lic_id.downcase)
     end
   end
+
+
 end
