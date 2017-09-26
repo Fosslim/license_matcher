@@ -23,6 +23,9 @@ module LicenseMatcher
       true
     end
 
+    # matches given text with SPDX licenses and returns Match object
+    # returns:
+    #   match - Match {label: String, score: float}
     def match_text(text, min_confidence = DEFAULT_MIN_CONFIDENCE, is_processed_text = false)
       return [] if text.to_s.empty?
 
@@ -42,9 +45,9 @@ module LicenseMatcher
       best_match = @model.documents[doc_id].id
 
       if best_score.to_f > min_confidence
-        best_match
+        Match.new(best_match, best_score)
       else
-        ""
+        Match.new("", 0.0)
       end
     end
 

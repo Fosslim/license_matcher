@@ -38,14 +38,14 @@ require 'license_matcher'
 curl -O https://github.com/Fosslim/license_matcher/blob/master/data/index.msgpack
 
 # or build index from the SPDX data
-LicenseMatcher::TFRustMatcher.build_index( "data/licenses", "data/index.msgpack")
+LicenseMatcher::IndexBuilder.build_index( "data/licenses", "data/index.msgpack")
 
 # match license text
 txt = File.read("fixtures/files/mit.txt");
 
 lm = LicenseMatcher::TFRubyMatcher.new("data/index.msgpack")
-lm.match_text(txt, 0.9) 
-
+m  = lm.match_text(txt, 0.9) 
+p "spdx id: #{m.get_label()}, confidence: #{m.get_score()}"
 
 ```
 

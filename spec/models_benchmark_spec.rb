@@ -34,12 +34,13 @@ describe "CorpusBenchmark" do
 
     # first check correctness of the match
     res1 = lm1.match_text(lic_txt, 0.0)
-    res2 = lm1.match_text(lic_txt, 0.0)
-    p "#{lic_name} => #{res1} | #{res2}"
+    res2 = lm2.match_text(lic_txt, 0.1)
+    p "#{lic_name} => #{res1.get_label()}:#{res1.get_score() } | #{res2.get_label()}:#{res2.get_score()}"
+
     expect(res1).not_to be_nil
-    expect(res1.empty? ).to be_falsey
-    expect(res1.downcase).to eq(lic_name.downcase)
-    expect(res2.downcase).to eq(lic_name.downcase)
+    expect(res1.get_label().empty? ).to be_falsey
+    expect(res1.get_label().downcase).to eq(lic_name.downcase)
+    expect(res2.get_label().downcase).to eq(lic_name.downcase)
 
     # now we are ready to run benchmarks
     Benchmark.bm do |x|
@@ -55,12 +56,13 @@ describe "CorpusBenchmark" do
 
     # first check correctness of the match
     res1 = lm1.match_text(lic_txt, 0.0)
-    res2 = lm1.match_text(lic_txt, 0.0)
-    p "#{lic_name} => #{res1} | #{res2}"
+    res2 = lm2.match_text(lic_txt, 0.0)
+    p "#{lic_name} => #{res1.get_label()}:#{res1.get_score() } | #{res2.get_label()}:#{res2.get_score()}"
+
     expect(res1).not_to be_nil
-    expect(res1.empty? ).to be_falsey
-    expect(res1.downcase).to eq(lic_name.downcase)
-    expect(res2.downcase).to eq(lic_name.downcase)
+    expect(res1.get_label().empty? ).to be_falsey
+    expect(res1.get_label().downcase).to eq(lic_name.downcase)
+    expect(res2.get_label().downcase).to eq(lic_name.downcase)
 
     # now we are ready to run benchmarks
     Benchmark.bm do |x|

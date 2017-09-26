@@ -21,15 +21,15 @@ describe LicenseMatcher::TFRubyMatcher do
   let(:mit_issue11){ File.read("#{spec_path}/mit_issue11.txt")}
 
   it "finds correct matches for text files" do
-    expect( lm.match_text(mit_txt) ).to eq("MIT")
-    expect( lm.match_text(pg_txt) ).to eq('PostgreSQL')
-    expect( lm.match_text(lgpl_txt) ).to eq('LGPL-2.0')
-    expect( lm.match_text(pg_txt) ).to eq('PostgreSQL')
-    expect( lm.match_text(bsd3_txt) ).to eq('BSD-3-Clause')
+    expect( lm.match_text(mit_txt).get_label() ).to eq("MIT")
+    expect( lm.match_text(pg_txt).get_label() ).to eq('PostgreSQL')
+    expect( lm.match_text(lgpl_txt).get_label() ).to eq('LGPL-2.0')
+    expect( lm.match_text(pg_txt).get_label() ).to eq('PostgreSQL')
+    expect( lm.match_text(bsd3_txt).get_label() ).to eq('BSD-3-Clause')
   end
 
   it "matches MIT license so it could fix the issue#11" do
-    expect( lm.match_text(mit_issue11) ).to eq('MIT')
+    expect( lm.match_text(mit_issue11).get_label() ).to eq('MIT')
   end
 
   let(:min_score){ 0.5 }
@@ -47,32 +47,31 @@ describe LicenseMatcher::TFRubyMatcher do
 
   it "finds correct matches for html files" do
 
-    expect( lm.match_html(mit_html, 0.5) ).to eq('MIT')
-    expect( lm.match_html(apache_html) ).to eq('Apache-2.0')
-    expect( lm.match_html(bsd3_html, 0.0).downcase ).to eq('bsd-4-clause-uc')
+    expect( lm.match_html(mit_html, 0.5).get_label() ).to eq('MIT')
+    expect( lm.match_html(apache_html).get_label() ).to eq('Apache-2.0')
+    expect( lm.match_html(bsd3_html, 0.0).get_label().downcase ).to eq('bsd-4-clause-uc')
 
     #how it handles noisy pages
-    spdx_id = lm.match_html(apache_aws, 0.5)
+    spdx_id = lm.match_html(apache_aws, 0.5).get_label()
     expect( spdx_id ).to eq('Apache-2.0')
 
-    spdx_id = lm.match_html(apache_plex, 0.0)
+    spdx_id = lm.match_html(apache_plex, 0.0).get_label()
     expect( spdx_id ).to eq('Apache-2.0')
 
-    spdx_id = lm.match_html(bsd_fparsec, 0.0)
+    spdx_id = lm.match_html(bsd_fparsec, 0.0).get_label()
     expect( spdx_id ).to eq('BSD-2-Clause')
 
-    spdx_id = lm.match_html(mit_ooi, 0.0)
+    spdx_id = lm.match_html(mit_ooi, 0.0).get_label()
     expect( spdx_id ).to eq('MIT')
 
-    spdx_id = lm.match_html(mit_bb, 0.0)
+    spdx_id = lm.match_html(mit_bb, 0.0).get_label()
     expect( spdx_id ).to eq('MIT')
 
-    expect( lm.match_html(mspl_ooi, 0.0) ).to eq('MS-PL')
+    expect( lm.match_html(mspl_ooi, 0.0).get_label() ).to eq('MS-PL')
 
-    spdx_id = lm.match_html(cpol, 0.0)
+    spdx_id = lm.match_html(cpol, 0.0).get_label()
     expect( spdx_id ).to eq('CPOL-1.02')
   end
-
 
   it "matches all the license files in the corpus" do
 
@@ -82,12 +81,12 @@ describe LicenseMatcher::TFRubyMatcher do
       lic_txt = File.read "#{corpus_path}/#{lic_name}"
 
       res = lm.match_text(lic_txt, 0.0)
-      p "#{lic_name} => #{res}"
+      p "#{lic_name} => #{res.get_label()}:#{res.get_score()}"
       expect(res).not_to be_nil
-      expect(res.empty? ).to be_falsey
-      expect(res.downcase).to eq(lic_id.downcase)
+      expect(res.get_label().empty? ).to be_falsey
+      expect(res.get_label().downcase).to eq(lic_id.downcase)
     end
   end
 
-
 end
+
