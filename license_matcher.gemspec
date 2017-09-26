@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = "license_matcher"
-  spec.version       = "0.1.0"
+  spec.version       = "0.2.0-alpha"
   spec.authors       = ["Timo Sulg", "Versioneye"]
   spec.email         = ["timgluz@gmail.com", "reiz@versioneye.com"]
 
@@ -12,9 +12,9 @@ Gem::Specification.new do |spec|
     with correct SPDX-id or EULA label.
   }
   spec.homepage      = "https://www.github.com/fosslim"
+  spec.licenses      = [ "MIT" ]
 
   spec.files        = Dir['{lib/**/*,[A-Z]*}']
-
   spec.platform     = Gem::Platform::RUBY
   spec.require_path = 'lib'
 
