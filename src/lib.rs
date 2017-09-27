@@ -1,10 +1,14 @@
+#![recursion_limit="256"]
+
 #[macro_use]
 extern crate helix;
 extern crate fosslim;
 
 use fosslim::index;
 use fosslim::naive_tf;
+use fosslim::finger_ngram;
 use fosslim::document::Document;
+
 
 ruby!{
     class IndexBuilder {
@@ -44,7 +48,7 @@ ruby!{
         }
 
         def initialize(helix, index_path: String) {
-            let idx = index::load(&index_path).expect("Failed to read index");
+            let idx = index::load(&index_path).expect("Failed to load the index");
             let mdl = naive_tf::from_index(&idx);
 
             TFRustMatcher { helix, index: idx, model: mdl }
@@ -67,4 +71,37 @@ ruby!{
             }
         }
     }
+
+    class FingerprintMatcher {
+        struct {
+            index: fosslim::index::Index,
+            model: fosslim::finger_ngram::FingerNgram
+        }
+
+        def initialize(helix, index_path: String) {
+            let idx = index::load(&index_path).expect("Failed to load the index");
+            let mdl = finger_ngram::from_index(&idx);
+
+            FingerprintMatcher { helix, index: idx, model: mdl}
+        }
+
+        def match_text(&self, lic_txt: String, min_score: f64) -> Match {
+            let no_match = Match::new("".to_string(), 0.0);
+            let doc = Document::new(0, "orig".to_string(), lic_txt);
+
+            match self.model.match_document(&doc) {
+                Some(score) => {
+                    let the_score: f64 = score.score as f64;
+                    if min_score <= the_score {
+                        Match::new(score.label.unwrap_or("".to_string()), the_score)
+                    } else {
+                        no_match
+                    }
+                },
+                None        => no_match
+            }
+
+        }
+    }
+
 }

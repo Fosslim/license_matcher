@@ -91,29 +91,40 @@ txt = File.read "fixtures/files/mit.txt"
 lm2.match_text txt
 ```
 
+* **FingerprintMacher** - uses hashes of 5-word-ngrams to build fingerprints of the license files;
+
+```
+lm3 = File.read "fixtures/files/mit.txt"
+lm3.match_text txt 
+```
+
 ## Benchmarks
 
-* initialization, Ruby version 1times, Rust version 1000x
+* initialization 1x
 
 ```
-					user     system      total        real
-TFRubyMatcher: 12.850000   0.180000  13.030000 ( 13.210955)
-TFRustMatcher: 26.260000   9.400000  35.660000 ( 38.264632)
+       				user     system      total        real
+TFRubyMatcher: 		12.970000   0.170000  13.140000 ( 13.361568)
+TFRustMatcher:  	0.030000   0.010000   0.040000 (  0.033793)
+FingerprintMatcher:  0.340000   0.010000   0.350000 (  0.368786)
 ```
+
 * matching preprocessed short [MIT](https://raw.githubusercontent.com/Fosslim/license_matcher/master/data/spdx_licenses/plain/MIT) text 1000x times
 
 ```
-       			user     system      total        real
-TFRubyMatcher:102.410000  12.180000 114.590000 (116.308119)
-TFRustMatcher:  7.170000   0.040000   7.210000 (  7.266000)
+      			  user     system      total        real
+TFRubyMatcher:102.380000   6.730000 109.110000 (113.526434)
+TFRustMatcher:  7.920000   0.100000   8.020000 (  8.248314)
+FingerMatcher:  4.750000   0.060000   4.810000 (  5.187512)
 ```
 
 * matching preprocessed long [AGPL-3.0](https://raw.githubusercontent.com/Fosslim/license_matcher/master/data/spdx_licenses/plain/AGPL-3.0) text 1000x times
 
 ```
        			user     system      total        real
-TFRubyMatcher:242.450000  21.960000 264.410000 (276.417704)
-TFRustMatcher:  9.340000   0.070000   9.410000 (  9.478597)
+TFRubyMatcher:217.270000   9.770000 227.040000 (232.190339)
+TFRustMatcher:  9.330000   0.120000   9.450000 (  9.654545)
+FingerMatcher: 23.650000   0.250000  23.900000 ( 24.311123)
 ```
 
 ## Development
