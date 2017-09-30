@@ -1,4 +1,3 @@
-
 module LicenseMatcher
   class UrlMatcher
     attr_reader :url_index
@@ -14,8 +13,8 @@ module LicenseMatcher
 
     def match_text(url_txt, min_confidence = 0.0)
       spdx_id, score = match_url url_txt.to_s.strip
-      if spdx_idx
-        Match.new(spdx_id, score.to_f)
+      if spdx_id
+        Match.new(spdx_id.to_s, score.to_f)
       else
         Match.new("", 0.0)
       end

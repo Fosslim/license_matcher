@@ -34,7 +34,7 @@ module LicenseMatcher
         Match.new("", 0.0)
       else
         spdx_id, score = res.first
-        Match.new(spdx_id, score.to_f)
+        Match.new(spdx_id.to_s, score.to_f)
       end
     end
 
