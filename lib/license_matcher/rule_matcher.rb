@@ -5,7 +5,7 @@ module LicenseMatcher
   class RuleMatcher
     attr_reader :licenses, :rules, :id_spdx_idx
 
-    DEFAULT_LICENSE_JSON      = 'data/spdx_licenses/licenses.json'
+    DEFAULT_LICENSE_JSON      = 'data/licenses.json'
 
     def initialize(license_json_file = DEFAULT_LICENSE_JSON)
 
@@ -26,6 +26,16 @@ module LicenseMatcher
       end
 
       idx
+    end
+
+    def match_text(text, min_confidence = 0.0)
+      res = match_rules(text, true)
+      if res.empty?
+        Match.new("", 0.0)
+      else
+        spdx_id, score = res.first
+        Match.new(spdx_id, score.to_f)
+      end
     end
 
     # finds matching regex rules in the text and sorts matches by length of match

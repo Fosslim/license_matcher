@@ -1,10 +1,9 @@
 
 module LicenseMatcher
-
   class UrlMatcher
     attr_reader :url_index
 
-    DEFAULT_LICENSE_JSON = 'data/spdx_licenses/licenses.json'
+    DEFAULT_LICENSE_JSON = 'data/licenses.json'
 
     def initialize(license_json_file = DEFAULT_LICENSE_JSON)
       licenses_json_doc = read_json_file license_json_file
@@ -13,33 +12,42 @@ module LicenseMatcher
       @url_index =  read_license_url_index(licenses_json_doc)
     end
 
-  # Matches License.url with urls in Licenses.json and returns tuple [spdx_id, score]
+    def match_text(url_txt, min_confidence = 0.0)
+      spdx_id, score = match_url
+      if spdx_idx
+        Match.new(spdx_id, score.to_f)
+      else
+        Match.new("", 0.0)
+      end
+    end
+
+    # Matches License.url with urls in Licenses.json and returns tuple [spdx_id, score]
     def match_url(the_url)
       the_url = the_url.to_s.strip
       spdx_id = nil
 
       case the_url
-      when 'http://jquery.org/license'
+      when /jquery\.org\/license/i
         return ['mit', 1.0] #Jquery license page doesnt include any license text
-      when 'https://www.mozilla.org/en-US/MPL/'
+      when /mozilla\.org\/en-US\/MPL/i
         return ['mpl-2.0', 1.0]
-      when 'http://fairlicense.org'
+      when /fairlicense\.org/i
         return ['fair', 1.0]
-      when 'http://www.aforgenet.com/framework/license.html'
+      when /aforgenet\.com\/framework\/license/i
         return ['lgpl-3.0', 1.0]
-      when 'http://www.apache.org/licenses/'
+      when /apache\.org\/licenses/i
         return ['apache-2.0', 1.0]
-      when 'http://aws.amazon.com/apache2.0/'
+      when /aws\.amazon\.com\/apache2\.0/i
         return ['apache-2.0', 1.0]
-      when 'http://aws.amazon.com/asl/'
+      when /aws\.amazon\.com\/asl/i
         return ['amazon', 1.0]
-      when 'https://choosealicense.com/no-license/'
+      when /choosealicense\.com\/no-license/i
         return ['no-license', 1.0]
-      when 'http://www.gzip.org/zlib/zlib_license.html'
+      when /gzip\.org\/zlib\/zlib?license/i
         return ['zlib', 1.0]
-      when 'http://zlib.net/zlib-license.html'
+      when /zlib\.net\/zlib?license/i
         return ['zlib', 1.0]
-      when 'http://www.wtfpl.net/about/'
+      when /wtfpl\.net\/about/i
         return ['wtfpl', 1.0]
       end
 
