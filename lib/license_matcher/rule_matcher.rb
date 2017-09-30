@@ -1,14 +1,11 @@
 require 'json'
 
 module LicenseMatcher
-  
-  class RuleMatcher
-    include Preprocess
 
+  class RuleMatcher
     attr_reader :licenses, :rules, :id_spdx_idx
 
     DEFAULT_LICENSE_JSON      = 'data/spdx_licenses/licenses.json'
-
 
     def initialize(license_json_file = DEFAULT_LICENSE_JSON)
 
@@ -39,7 +36,7 @@ module LicenseMatcher
     #   [[spdx_id, score, matching_rule, matching_length],...]
     def match_rules(text, early_exit = false)
       matches = []
-      text = preprocess_text(text)
+      text = LicenseMatcher::Preprocess.preprocess_text(text)
 
       #if text is already spdx_id, then shortcut matching
       if @rules.has_key?(text.downcase)
@@ -90,7 +87,6 @@ module LicenseMatcher
     def read_json_file(file_path)
       JSON.parse(File.read(file_path), {symbolize_names: true})
     rescue
-      log.info "Failed to read json file `#{file_path}`"
       nil
     end
 
@@ -144,7 +140,7 @@ module LicenseMatcher
       end
 
 
-      spdx_name = preprocess_text(spdx_item[:name])
+      spdx_name = LicenseMatcher::Preprocess.preprocess_text(spdx_item[:name])
       spdx_name.gsub!(/\(.+?\)/, '')       #remove SPDX ids in the license names
       spdx_name.gsub!(/\./, '\\.')         #mark version dots as not regex selector
       spdx_name.gsub!(/[\*|\?|\+]/, '.')   #replace regex selector with whatever mark ~> WTFPL name

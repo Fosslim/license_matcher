@@ -36,7 +36,7 @@ describe "CorpusBenchmark" do
   it "measures matching time for MIT license" do
     lic_name = 'MIT'
     lic_txt = File.read "#{corpus_path}/#{lic_name}"
-    lic_txt = lm1.preprocess_text(lic_txt)
+    lic_txt = LicenseMatcher::Preprocess.preprocess_text(lic_txt)
 
     # first check correctness of the match
     res1 = lm1.match_text(lic_txt, 0.0)
@@ -58,7 +58,7 @@ describe "CorpusBenchmark" do
 
     # now we are ready to run benchmarks
     Benchmark.bm do |x|
-      x.report("TFRubyMatcher:") { n_tries.times do lm1.match_text(lic_txt, 0.0, true); end }
+      x.report("TFRubyMatcher:") { n_tries.times do lm1.match_text(lic_txt, 0.0); end }
       x.report("TFRustMatcher:") { n_tries.times do lm2.match_text(lic_txt, 0.0); end }
       x.report("FingerMatcher:") { n_tries.times do lm3.match_text(lic_txt, 0.0); end }
 
@@ -68,7 +68,7 @@ describe "CorpusBenchmark" do
   it "measures matching time for AGPL license" do
     lic_name = 'AGPL-3.0'
     lic_txt = File.read "#{corpus_path}/#{lic_name}"
-    lic_txt = lm1.preprocess_text(lic_txt)
+    lic_txt = LicenseMatcher::Preprocess.preprocess_text(lic_txt)
 
     # first check correctness of the match
     res1 = lm1.match_text(lic_txt, 0.0)
@@ -90,7 +90,7 @@ describe "CorpusBenchmark" do
 
     # now we are ready to run benchmarks
     Benchmark.bm do |x|
-      x.report("TFRubyMatcher:") { n_tries.times do lm1.match_text(lic_txt, 0.0, true); end }
+      x.report("TFRubyMatcher:") { n_tries.times do lm1.match_text(lic_txt, 0.0); end }
       x.report("TFRustMatcher:") { n_tries.times do lm2.match_text(lic_txt, 0.0); end }
       x.report("FingerMatcher:") { n_tries.times do lm3.match_text(lic_txt, 0.0); end }
     end

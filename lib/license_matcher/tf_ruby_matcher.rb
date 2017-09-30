@@ -5,7 +5,6 @@ require 'msgpack'
 module LicenseMatcher
 
   class TFRubyMatcher
-    include Preprocess
 
     attr_reader :corpus, :model, :spdx_ids
 
@@ -26,10 +25,9 @@ module LicenseMatcher
     # matches given text with SPDX licenses and returns Match object
     # returns:
     #   match - Match {label: String, score: float}
-    def match_text(text, min_confidence = DEFAULT_MIN_CONFIDENCE, is_processed_text = false)
+    def match_text(text, min_confidence = DEFAULT_MIN_CONFIDENCE)
       return [] if text.to_s.empty?
 
-      text = preprocess_text(text) if is_processed_text == false
       test_doc   = TfIdfSimilarity::Document.new(text, {:id => "test"})
 
       mat1 = @model.instance_variable_get(:@matrix)
@@ -52,7 +50,8 @@ module LicenseMatcher
     end
 
     def match_html(html_text, min_confidence = DEFAULT_MIN_CONFIDENCE)
-      match_text(preprocess_html(html_text), min_confidence)
+      clean_text = LicenseMatcher::Preprocess.preprocess_html(html_text)
+      match_text(clean_text, min_confidence)
     end
 
   #-- helpers
@@ -89,7 +88,7 @@ module LicenseMatcher
 
       idx[A_DOC_ROW].to_a.each do |doc_row|
         _, spdx_id, content, _ = doc_row
-        txt = preprocess_text content
+        txt = LicenseMatcher::Preprocess.preprocess_text content
         if txt
           spdx_ids << spdx_id
           docs << TfIdfSimilarity::Document.new(txt, :id => spdx_id)

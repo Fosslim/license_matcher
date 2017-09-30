@@ -44,7 +44,7 @@ LicenseMatcher::IndexBuilder.build_index( "data/licenses", "data/index.msgpack")
 txt = File.read("fixtures/files/mit.txt");
 
 lm = LicenseMatcher::TFRubyMatcher.new("data/index.msgpack")
-m  = lm.match_text(txt, 0.9) 
+m  = lm.match_text(txt, 0.9)
 p "spdx id: #{m.get_label()}, confidence: #{m.get_score()}"
 
 ```
@@ -78,7 +78,7 @@ lm.match_rules "It is license under Apache 2.0 License."
 lm = LicenseMatcher::TFRubyMatcher.new
 
 txt = File.read "fixtures/files/mit.html"
-clean_txt = lm.preprocess_html txt # NB! it may help to increase accuracy
+clean_txt = LicenseMatcher::Preprocess.preprocess_html txt # NB! it may help to increase accuracy
 lm.match_txt clean_txt
 ```
 
@@ -95,7 +95,7 @@ lm2.match_text txt
 
 ```
 lm3 = File.read "fixtures/files/mit.txt"
-lm3.match_text txt 
+lm3.match_text txt
 ```
 
 ## Benchmarks
@@ -138,7 +138,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/fosslim/license_matcher. 
+Bug reports and pull requests are welcome on GitHub at https://github.com/fosslim/license_matcher.
 
 This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 

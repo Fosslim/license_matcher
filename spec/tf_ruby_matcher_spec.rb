@@ -18,7 +18,11 @@ describe LicenseMatcher::TFRubyMatcher do
   let(:lgpl_txt){ File.read("#{corpus_path}/LGPL-2.0") }
   let(:bsd3_txt){ File.read("#{corpus_path}/BSD-3-Clause") }
   let(:dotnet_txt){ File.read('data/custom_licenses/ms_dotnet') }
-  let(:mit_issue11){ File.read("#{spec_path}/mit_issue11.txt")}
+  let(:mit_issue11){
+    LicenseMatcher::Preprocess.preprocess_text(
+      File.read("#{spec_path}/mit_issue11.txt")
+    )
+  }
 
   it "finds correct matches for text files" do
     expect( lm.match_text(mit_txt).get_label() ).to eq("MIT")
