@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = "license_matcher"
-  spec.version       = "0.3.0"
+  spec.version       = "0.3.1"
   spec.authors       = ["Timo Sulg", "Versioneye"]
   spec.email         = ["timgluz@gmail.com", "reiz@versioneye.com"]
 
