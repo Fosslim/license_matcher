@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = "license_matcher"
-  spec.version       = "0.2.0"
+  spec.version       = "0.3.0"
   spec.authors       = ["Timo Sulg", "Versioneye"]
   spec.email         = ["timgluz@gmail.com", "reiz@versioneye.com"]
 
@@ -23,6 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'tf-idf-similarity', '~> 0.1'
   spec.add_dependency 'nokogiri', '~> 1.8'
   spec.add_dependency 'msgpack', '~> 1.1'
+  spec.add_dependency 'os', '~> 1.0'
 
   spec.add_development_dependency "bundler", "~> 1.15"
   spec.add_development_dependency "rake", "~> 10.0"

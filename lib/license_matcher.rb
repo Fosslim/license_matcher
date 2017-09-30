@@ -1,9 +1,21 @@
+require 'os'
 require "helix_runtime"
 
-begin
+
+if OS.mac?
+  begin
     require "license_matcher/native"
-rescue LoadError
-    warn "Unable to load license_matcher/native. Please run `rake build`"
+  rescue LoadError
+    warn "Failed to load native extensions for OSx. Please run `rake build`"
+  end
+elsif OS.posix?
+  begin
+    require "license_matcher/native.so"
+  rescue LoadError
+    warn "Failed to load native extensions for Posix. Please run `rake build`"
+  end
+else
+  warn "Unsupported platform - you are not able to use some models;"
 end
 
 require 'license_matcher/preprocess'
