@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.platform     = Gem::Platform::RUBY
   spec.require_path = 'lib'
 
-  spec.add_dependency 'helix_runtime', '~> 0.6'
+  spec.add_dependency 'helix_runtime', '~> 0.7.2'
   spec.add_dependency 'narray', '~> 0.6.1.2'
   spec.add_dependency 'tf-idf-similarity', '~> 0.1'
   spec.add_dependency 'nokogiri', '~> 1.8'
