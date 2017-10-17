@@ -18,6 +18,9 @@ describe LicenseMatcher::FingerprintMatcher do
     expect(res).not_to be_nil
     expect(res.label).to eq('0BSD')
     expect(res.score).to be > 0.9
+
+    expect(lm.match_text('', 0.9)).to be_nil
+    expect(lm.match_text('not a real license', 0.9)).to be_nil
   end
 
   it "matches all the license files in the corpus" do

@@ -36,6 +36,11 @@ describe LicenseMatcher::TFRubyMatcher do
     expect( lm.match_text(mit_issue11).label ).to eq('MIT')
   end
 
+  it "returns nil when no match are found" do
+    expect( lm.match_text('') ).to be_nil
+    expect( lm.match_text('not a real license') ).to be_nil
+  end
+
   let(:min_score){ 0.5 }
   let(:mit_html){ File.read "#{spec_path}/mit.htm" }
   let(:apache_html){File.read "#{spec_path}/apache2.html" }
@@ -87,7 +92,6 @@ describe LicenseMatcher::TFRubyMatcher do
       res = lm.match_text(lic_txt, 0.0)
       p "#{lic_name} => #{res.label}:#{res.score}"
       expect(res).not_to be_nil
-      expect(res.label.empty?).to be_falsey
       expect(res.label.downcase).to eq(lic_id.downcase)
     end
   end

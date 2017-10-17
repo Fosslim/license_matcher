@@ -50,21 +50,18 @@ ruby!{
             TFRustMatcher { helix, model }
         }
 
-        def match_text(&self, lic_txt: String, min_score: f64) -> Match {
-            let no_match = Match::new("".to_string(), 0.0) ;
+        def match_text(&self, lic_txt: String, min_score: f64) -> Option<Match> {
             let doc = Document::new(0, "orig".to_string(), lic_txt);
 
-            match self.model.match_document(&doc) {
-                Some(score) => {
-                    let the_score: f64 = score.score as f64;
-                    if min_score <= the_score {
-                        Match::new(score.label.unwrap_or("".to_string()), the_score)
-                    } else {
-                        no_match
-                    }
-                },
-                None        => no_match
-            }
+            self.model.match_document(&doc).and_then(|score| {
+                let the_score = score.score as f64;
+
+                if min_score <= the_score {
+                    Some(Match::new(score.label.unwrap_or("".to_string()), the_score))
+                } else {
+                    None
+                }
+            })
         }
     }
 
@@ -80,22 +77,18 @@ ruby!{
             FingerprintMatcher { helix, model }
         }
 
-        def match_text(&self, lic_txt: String, min_score: f64) -> Match {
-            let no_match = Match::new("".to_string(), 0.0);
+        def match_text(&self, lic_txt: String, min_score: f64) -> Option<Match> {
             let doc = Document::new(0, "orig".to_string(), lic_txt);
 
-            match self.model.match_document(&doc) {
-                Some(score) => {
-                    let the_score: f64 = score.score as f64;
-                    if min_score <= the_score {
-                        Match::new(score.label.unwrap_or("".to_string()), the_score)
-                    } else {
-                        no_match
-                    }
-                },
-                None        => no_match
-            }
+            self.model.match_document(&doc).and_then(|score| {
+                let the_score = score.score as f64;
 
+                if min_score <= the_score {
+                    Some(Match::new(score.label.unwrap_or("".to_string()), the_score))
+                } else {
+                    None
+                }
+            })
         }
     }
 

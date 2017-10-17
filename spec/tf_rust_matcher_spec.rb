@@ -33,6 +33,9 @@ describe LicenseMatcher::TFRustMatcher do
 
     expect(res.label).to eq('0BSD')
     expect(res.score).to be > 0.9
+
+    expect(lm.match_text('', 0.9)).to be_nil
+    expect(lm.match_text('not a real license', 0.9)).to be_nil
   end
 
   it "matches all the license files in the corpus" do
@@ -48,7 +51,6 @@ describe LicenseMatcher::TFRustMatcher do
       p "#{lic_name} => #{res.label}:#{res.score}"
 
       expect(res).not_to be_nil
-      expect(res.label.empty?).to be_falsey
       expect(res.label.downcase).to eq(lic_id.downcase)
     end
   end
