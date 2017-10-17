@@ -61,7 +61,7 @@ describe LicenseMatcher::RuleMatcher do
     end
 
     it "matches APACHE licenses" do
-      expect(lm.match_rules('APACHEv1').first.first ).to eq('apache-1.0')
+      expect(lm.match_rules('APACHEv1').first.first).to eq('apache-1.0')
       expect(lm.match_rules('Lic as APACHE-V1').first.first).to eq('apache-1.0')
       expect(lm.match_rules('APacheV1 is +100').first.first).to eq('apache-1.0')
       expect(lm.match_rules('Released under Apache-1.0').first.first).to eq('apache-1.0')
@@ -667,7 +667,7 @@ describe LicenseMatcher::RuleMatcher do
 
       expect(lm.match_rules('GPL-2')[0][0]).to eq('gpl-2.0')
       expect(lm.match_rules('GPL v2')[0][0]).to eq('gpl-2.0')
-      expect( lm.match_rules('GNU GPL v2 or later, plus transitive 12 m').first.first ).to eq('gpl-2.0')
+      expect(lm.match_rules('GNU GPL v2 or later, plus transitive 12 m').first.first).to eq('gpl-2.0')
 
       expect(lm.match_rules('GNU PUBLIC LICENSE 2.0')[0][0]).to eq('gpl-2.0')
       expect(lm.match_rules('GNU PUBLIC LICENSE 2')[0][0]).to eq('gpl-2.0')

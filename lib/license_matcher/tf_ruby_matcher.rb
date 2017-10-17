@@ -26,7 +26,7 @@ module LicenseMatcher
     # returns:
     #   match - Match {label: String, score: float}
     def match_text(text, min_confidence = DEFAULT_MIN_CONFIDENCE)
-      return [] if text.to_s.empty?
+      return if text.to_s.empty?
 
       test_doc   = TfIdfSimilarity::Document.new(text, {:id => "test"})
 
@@ -44,8 +44,6 @@ module LicenseMatcher
 
       if best_score.to_f > min_confidence
         Match.new(best_match, best_score)
-      else
-        Match.new("", 0.0)
       end
     end
 

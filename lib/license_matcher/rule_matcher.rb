@@ -30,9 +30,7 @@ module LicenseMatcher
 
     def match_text(text, min_confidence = 0.0)
       res = match_rules(text, true)
-      if res.empty?
-        Match.new("", 0.0)
-      else
+      unless res.empty?
         spdx_id, score = res.first
         Match.new(spdx_id.to_s, score.to_f)
       end

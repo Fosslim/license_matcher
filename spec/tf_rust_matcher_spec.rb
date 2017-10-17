@@ -10,6 +10,11 @@ describe LicenseMatcher::TFRustMatcher do
     Dir.entries('data/spdx_licenses/plain').to_a.delete_if {|f| /\A\.+/.match(f) }
   }
 
+  it 'raises when passed it fails to build the index' do
+    expect {
+      LicenseMatcher::IndexBuilder.build_index('not', 'found')
+    }.to raise_error('target path doesnt exists or is not accessible')
+  end
 
   it 'builds an correct index from test licenses' do
     res = LicenseMatcher::IndexBuilder.build_index(test_folder, test_index_path)
@@ -26,8 +31,11 @@ describe LicenseMatcher::TFRustMatcher do
 
     res = lm.match_text(test_txt, 0.9)
 
-    expect(res.get_label()).to eq('0BSD')
-    expect(res.get_score()).to be > 0.9
+    expect(res.label).to eq('0BSD')
+    expect(res.score).to be > 0.9
+
+    expect(lm.match_text('', 0.9)).to be_nil
+    expect(lm.match_text('not a real license', 0.9)).to be_nil
   end
 
   it "matches all the license files in the corpus" do
@@ -40,13 +48,11 @@ describe LicenseMatcher::TFRustMatcher do
       lic_txt = File.read "#{corpus_path}/#{lic_name}"
 
       res = lm.match_text(lic_txt, 0.0)
-      p "#{lic_name} => #{res.get_label()}:#{res.get_score()}"
+      p "#{lic_name} => #{res.label}:#{res.score}"
 
       expect(res).not_to be_nil
-      expect(res.get_label().empty? ).to be_falsey
-      expect(res.get_label().downcase).to eq(lic_id.downcase)
+      expect(res.label.downcase).to eq(lic_id.downcase)
     end
   end
-
 
 end

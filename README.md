@@ -45,7 +45,7 @@ txt = File.read("fixtures/files/mit.txt");
 
 lm = LicenseMatcher::TFRubyMatcher.new("data/index.msgpack")
 m  = lm.match_text(txt, 0.9)
-p "spdx id: #{m.get_label()}, confidence: #{m.get_score()}"
+p "spdx id: #{m.label}, confidence: #{m.score}"
 
 ```
 

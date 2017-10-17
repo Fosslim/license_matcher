@@ -16,8 +16,11 @@ describe LicenseMatcher::FingerprintMatcher do
     res = lm.match_text test_content, 0.9
 
     expect(res).not_to be_nil
-    expect(res.get_label()).to eq('0BSD')
-    expect(res.get_score()).to be > 0.9
+    expect(res.label).to eq('0BSD')
+    expect(res.score).to be > 0.9
+
+    expect(lm.match_text('', 0.9)).to be_nil
+    expect(lm.match_text('not a real license', 0.9)).to be_nil
   end
 
   it "matches all the license files in the corpus" do
@@ -29,11 +32,11 @@ describe LicenseMatcher::FingerprintMatcher do
       lic_txt = File.read "#{corpus_path}/#{lic_name}"
 
       res = lm.match_text(lic_txt, 0.0)
-      p "#{lic_name} => #{res.get_label()}:#{res.get_score()}"
+      p "#{lic_name} => #{res.label}:#{res.score}"
 
       expect(res).not_to be_nil
-      expect(res.get_label().empty? ).to be_falsey
-      expect(res.get_label().downcase).to eq(lic_id.downcase)
+      expect(res.label.empty?).to be_falsey
+      expect(res.label.downcase).to eq(lic_id.downcase)
     end
   end
 
