@@ -44,17 +44,17 @@ describe "CorpusBenchmark" do
     res3 = lm3.match_text(lic_txt, 0.0)
     p %Q[
       Expected license: #{lic_name}
-      TFRuby: #{res1.get_label()}:#{res1.get_score()}
-      TFRust: #{res2.get_label()}:#{res2.get_score()}
-      Finger: #{res3.get_label()}:#{res3.get_score()}
+      TFRuby: #{res1.label}:#{res1.score}
+      TFRust: #{res2.label}:#{res2.score}
+      Finger: #{res3.label}:#{res3.score}
     ]
 
 
     expect(res1).not_to be_nil
-    expect(res1.get_label().empty? ).to be_falsey
-    expect(res1.get_label().downcase).to eq(lic_name.downcase)
-    expect(res2.get_label().downcase).to eq(lic_name.downcase)
-    expect(res3.get_label().downcase).to eq(lic_name.downcase)
+    expect(res1.label.empty?).to be_falsey
+    expect(res1.label.downcase).to eq(lic_name.downcase)
+    expect(res2.label.downcase).to eq(lic_name.downcase)
+    expect(res3.label.downcase).to eq(lic_name.downcase)
 
     # now we are ready to run benchmarks
     Benchmark.bm do |x|
@@ -76,17 +76,17 @@ describe "CorpusBenchmark" do
     res3 = lm3.match_text(lic_txt, 0.0)
     p %Q[
       Expected license: #{lic_name}
-      TFRuby: #{res1.get_label()}:#{res1.get_score()}
-      TFRust: #{res2.get_label()}:#{res2.get_score()}
-      Finger: #{res3.get_label()}:#{res3.get_score()}
+      TFRuby: #{res1.label}:#{res1.score}
+      TFRust: #{res2.label}:#{res2.score}
+      Finger: #{res3.label}:#{res3.score}
     ]
 
 
     expect(res1).not_to be_nil
-    expect(res1.get_label().empty? ).to be_falsey
-    expect(res1.get_label().downcase).to eq(lic_name.downcase)
-    expect(res2.get_label().downcase).to eq(lic_name.downcase)
-    expect(res3.get_label().downcase).to eq(lic_name.downcase)
+    expect(res1.label.empty?).to be_falsey
+    expect(res1.label.downcase).to eq(lic_name.downcase)
+    expect(res2.label.downcase).to eq(lic_name.downcase)
+    expect(res3.label.downcase).to eq(lic_name.downcase)
 
     # now we are ready to run benchmarks
     Benchmark.bm do |x|

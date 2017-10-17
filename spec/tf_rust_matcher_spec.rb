@@ -31,8 +31,8 @@ describe LicenseMatcher::TFRustMatcher do
 
     res = lm.match_text(test_txt, 0.9)
 
-    expect(res.get_label()).to eq('0BSD')
-    expect(res.get_score()).to be > 0.9
+    expect(res.label).to eq('0BSD')
+    expect(res.score).to be > 0.9
   end
 
   it "matches all the license files in the corpus" do
@@ -45,11 +45,11 @@ describe LicenseMatcher::TFRustMatcher do
       lic_txt = File.read "#{corpus_path}/#{lic_name}"
 
       res = lm.match_text(lic_txt, 0.0)
-      p "#{lic_name} => #{res.get_label()}:#{res.get_score()}"
+      p "#{lic_name} => #{res.label}:#{res.score}"
 
       expect(res).not_to be_nil
-      expect(res.get_label().empty? ).to be_falsey
-      expect(res.get_label().downcase).to eq(lic_id.downcase)
+      expect(res.label.empty?).to be_falsey
+      expect(res.label.downcase).to eq(lic_id.downcase)
     end
   end
 

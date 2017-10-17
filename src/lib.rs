@@ -29,11 +29,11 @@ ruby!{
             Match { helix, label, score }
         }
 
-        def get_label(&self) -> &str {
+        def label(&self) -> &str {
             &self.label
         }
 
-        def get_score(&self) -> f64 {
+        def score(&self) -> f64 {
             self.score
         }
     }
