@@ -26,7 +26,7 @@ ruby!{
         }
 
         def initialize(helix, label: String, score: f64) {
-            Match { helix, label: label, score: score}
+            Match { helix, label, score }
         }
 
         def get_label(&self) -> &str {
@@ -40,15 +40,14 @@ ruby!{
 
     class TFRustMatcher {
         struct {
-            index: fosslim::index::Index,
             model: fosslim::naive_tf::NaiveTFModel
         }
 
         def initialize(helix, index_path: String) {
-            let idx = index::load(&index_path).expect("Failed to load the index");
-            let mdl = naive_tf::from_index(&idx);
+            let index = index::load(&index_path).expect("Failed to load the index");
+            let model = naive_tf::from_index(&index);
 
-            TFRustMatcher { helix, index: idx, model: mdl }
+            TFRustMatcher { helix, model }
         }
 
         def match_text(&self, lic_txt: String, min_score: f64) -> Match {
@@ -71,15 +70,14 @@ ruby!{
 
     class FingerprintMatcher {
         struct {
-            index: fosslim::index::Index,
             model: fosslim::finger_ngram::FingerNgram
         }
 
         def initialize(helix, index_path: String) {
-            let idx = index::load(&index_path).expect("Failed to load the index");
-            let mdl = finger_ngram::from_index(&idx);
+            let index = index::load(&index_path).expect("Failed to load the index");
+            let model = finger_ngram::from_index(&index);
 
-            FingerprintMatcher { helix, index: idx, model: mdl}
+            FingerprintMatcher { helix, model }
         }
 
         def match_text(&self, lic_txt: String, min_score: f64) -> Match {
