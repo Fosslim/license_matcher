@@ -29,8 +29,8 @@ ruby!{
             Match { helix, label: label, score: score}
         }
 
-        def get_label(&self) -> String {
-            self.label.clone()
+        def get_label(&self) -> &str {
+            &self.label
         }
 
         def get_score(&self) -> f64 {
