@@ -10,6 +10,11 @@ describe LicenseMatcher::TFRustMatcher do
     Dir.entries('data/spdx_licenses/plain').to_a.delete_if {|f| /\A\.+/.match(f) }
   }
 
+  it 'raises when passed it fails to build the index' do
+    expect {
+      LicenseMatcher::IndexBuilder.build_index('not', 'found')
+    }.to raise_error('target path doesnt exists or is not accessible')
+  end
 
   it 'builds an correct index from test licenses' do
     res = LicenseMatcher::IndexBuilder.build_index(test_folder, test_index_path)
@@ -47,6 +52,5 @@ describe LicenseMatcher::TFRustMatcher do
       expect(res.get_label().downcase).to eq(lic_id.downcase)
     end
   end
-
 
 end

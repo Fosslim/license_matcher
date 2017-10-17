@@ -12,14 +12,11 @@ use fosslim::document::Document;
 
 ruby!{
     class IndexBuilder {
-
-        def build_index(source_folder: String, target_path: String) -> bool {
-            match index::build_from_path(&source_folder) {
-                Ok(idx) => index::save(&idx, &target_path).is_ok(),
-                Err(_)  => false
-            }
+        def build_index(source_folder: String, target_path: String) -> Result<bool, String> {
+            index::build_from_path(&source_folder)
+                .and_then(|idx| index::save(&idx, &target_path))
+                .map_err(|e| e.message.to_string())
         }
-
     }
 
     class Match {
